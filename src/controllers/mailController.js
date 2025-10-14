@@ -3,7 +3,7 @@ const transporter = require('../config/nodemailer');
 exports.sendMail = async ({ to, subject, text }) => {
   try {
     const info = await transporter.sendMail({
-      from: '"Auth App" <sophiyastanish1@gmail.com>',
+      from: `Auth App" <${process.env.EMAIL_USER}>`,
       to,
       subject,
       text,
