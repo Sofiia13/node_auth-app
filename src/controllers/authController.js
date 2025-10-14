@@ -2,33 +2,17 @@ const User = require('../models/User');
 const bcrypt = require('bcrypt');
 const { v4: uuidv4 } = require('uuid');
 const mailController = require('./mailController');
+const usersRepository = require('../services/usersRepository');
+
 require('dotenv').config();
-
-function validateEmail(email) {
-  const emailPattern = /^[\w.+-]+@([\w-]+\.){1,3}[\w-]{2,}$/;
-
-  if (!email) return 'Email is required';
-  if (!emailPattern.test(email)) return 'Email is not valid';
-}
-
-function validatePassword(password) {
-  if (!password) return 'Password is required';
-  if (password.length < 6) return 'At least 6 characters';
-}
-
-function getByEmail(email) {
-  return User.findOne({
-    where: { email },
-  });
-}
 
 const createUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
 
     const errors = {
-      email: validateEmail(email),
-      password: validatePassword(password),
+      email: usersRepository.validateEmail(email),
+      password: usersRepository.validatePassword(password),
     };
 
     if (Object.values(errors).some((error) => error)) {
@@ -38,7 +22,7 @@ const createUser = async (req, res) => {
       });
     }
 
-    const existingUser = await getByEmail(email);
+    const existingUser = await usersRepository.getByEmail(email);
 
     if (existingUser) {
       return res.status(400).json({
@@ -72,6 +56,25 @@ const createUser = async (req, res) => {
   }
 };
 
+const activateAccount = async (req, res) => {
+  try {
+    const { token } = req.params;
+    const user = await User.findOne({ where: { activationToken: token } });
+
+    if (!user) return res.status(400).send('Invalid activation link');
+
+    user.activationToken = null;
+    await user.save();
+
+    res.send('Акаунт активовано!');
+
+    res.redirect('/profile');
+  } catch (err) {
+    res.status(500).send(err.message);
+  }
+};
+
 module.exports = {
   createUser,
+  activateAccount,
 };

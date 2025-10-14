@@ -2,7 +2,7 @@
 
 const express = require('express');
 const sequelize = require('./config/db');
-const userRoutes = require('./routes/authRoutes');
+const authRoutes = require('./routes/authRoutes');
 const mailRoutes = require('./routes/mailRoutes');
 
 const app = express();
@@ -21,7 +21,7 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
-app.use('/', userRoutes);
+app.use('/auth', authRoutes);
 app.use('/mail', mailRoutes);
 
 app.listen(port, () => {
