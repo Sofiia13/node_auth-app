@@ -4,6 +4,7 @@ const express = require('express');
 const sequelize = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
 const mailRoutes = require('./routes/mailRoutes');
+const profileRoutes = require('./routes/profileRoutes');
 
 const app = express();
 const port = 3000;
@@ -21,8 +22,14 @@ app.get('/', (req, res) => {
   res.send('Hello World!');
 });
 
+app.use('/profile', profileRoutes);
+
 app.use('/auth', authRoutes);
 app.use('/mail', mailRoutes);
+
+app.use((req, res, next) => {
+  res.status(404).json({ message: 'Not Found' });
+});
 
 app.listen(port, () => {
   /* eslint-disable no-console */
