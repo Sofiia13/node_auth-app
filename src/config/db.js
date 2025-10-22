@@ -1,10 +1,16 @@
 const { Sequelize } = require('sequelize');
+require('dotenv').config();
 
-const sequelize = new Sequelize('node_auth_db', 'sofia', 'mypassword', {
-  host: 'localhost',
-  dialect: 'postgres',
-  logging: false,
-});
+const sequelize = new Sequelize(
+  process.env.DB_NAME || 'node_auth_db',
+  process.env.DB_USER || 'sofia',
+  process.env.DB_PASSWORD || 'mypassword',
+  {
+    host: process.env.DB_HOST,
+    dialect: process.env.DB_DIALECT,
+    logging: false,
+  },
+);
 
 async function testConnection() {
   try {

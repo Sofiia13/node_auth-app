@@ -72,6 +72,19 @@ const activateAccount = async (req, res) => {
     user.isActive = true;
     await user.save({ fields: ['activationToken', 'isActive'] });
 
+    const jwtToken = jwt.sign(
+      { id: user.id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '1h' },
+    );
+
+    res
+      .cookie('token', jwtToken, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+      })
+      .redirect('/profile');
+
     // res.send('Акаунт активовано!');
     return res.redirect('/profile');
   } catch (err) {
