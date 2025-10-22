@@ -9,7 +9,7 @@ const app = express();
 const port = 3000;
 
 sequelize
-  .sync({ force: true })
+  .sync()
   /* eslint-disable no-console */
   .then(() => console.log('Database synced'))
   /* eslint-disable no-console */
