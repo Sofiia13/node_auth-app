@@ -71,7 +71,8 @@ const activateAccount = async (req, res) => {
     user.isActive = true;
     await user.save({ fields: ['activationToken', 'isActive'] });
 
-    res.send('Акаунт активовано!');
+    // res.send('Акаунт активовано!');
+    return res.redirect('/profile');
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -112,8 +113,7 @@ const login = async (req, res) => {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
       })
-      .status(200)
-      .json({ message: 'Login successful', user });
+      .redirect('/profile');
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -122,9 +122,9 @@ const login = async (req, res) => {
 const logout = (req, res) => {
   res.clearCookie('token');
 
-  return res.status(200).json({ message: 'Logged out successfully' });
+  // return res.status(200).json({ message: 'Logged out successfully' });
 
-  // return res.redirect('/login');
+  return res.redirect('/login');
 };
 
 const forgotPassword = async (req, res) => {
