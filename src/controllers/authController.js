@@ -5,6 +5,7 @@ const mailController = require('./mailController');
 const usersRepository = require('../services/usersRepository');
 const jwt = require('jsonwebtoken');
 const { Op } = require('sequelize');
+const cryptoModule = require('crypto');
 
 require('dotenv').config();
 
@@ -136,10 +137,10 @@ const forgotPassword = async (req, res) => {
     return res.status(200).json({ message: 'If user exists, email was sent' });
   }
 
-  const resetToken = crypto.randomBytes(32).toString('hex');
+  const resetToken = cryptoModule.randomBytes(32).toString('hex');
 
   user.resetPasswordToken = resetToken;
-  user.resetPasswordExpires = Date.now() + 3600000; // 1 година
+  user.resetPasswordExpires = Date.now() + 3600000;
   await user.save({ fields: ['resetPasswordToken', 'resetPasswordExpires'] });
 
   const resetLink = `http://${process.env.API_URL}/auth/reset-password/${resetToken}`;
